@@ -11,153 +11,156 @@
 </head>
 <body>
 
-  <!-- Background Effects -->
-  <div class="bg-grid"></div>
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+  <!-- Subtle background -->
+  <div class="bg-noise"></div>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+
+  <!-- Navbar -->
+  <nav class="nav" id="nav">
+    <div class="nav__container">
+      <a href="#" class="nav__brand">
+        <span class="nav__logo">K</span>
+        <span class="nav__title">KonversiBilangan</span>
+      </a>
+      <div class="nav__links" id="nav-links">
+        <a href="#converter" class="nav__link active">Konverter</a>
+        <a href="#ref-section" class="nav__link">Referensi</a>
+      </div>
+      <button class="nav__hamburger" id="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer__backdrop" id="drawer-backdrop"></div>
+    <div class="drawer__panel">
+      <a href="#converter" class="drawer__link">Konverter</a>
+      <a href="#ref-section" class="drawer__link">Referensi</a>
+    </div>
   </div>
-  <div class="binary-rain"></div>
 
-  <div class="container">
+  <main class="main">
+    <div class="container">
 
-    <!-- Hero Section -->
-    <header class="hero" id="hero">
-      <div class="hero__badge">Interactive Learning Tool</div>
-      <h1 class="hero__title">KonversiBilangan</h1>
-      <p class="hero__subtitle">Pelajari cara mengkonversi bilangan antar sistem bilangan dengan penjelasan langkah demi langkah yang interaktif.</p>
-    </header>
+      <!-- Hero -->
+      <header class="hero" id="hero">
+        <p class="hero__eyebrow">Media Belajar Interaktif</p>
+        <h1 class="hero__title">Konversi Bilangan,<br><span>Step by Step.</span></h1>
+        <p class="hero__desc">Pahami cara kerja konversi antar sistem bilangan dengan penjelasan visual langkah demi langkah.</p>
+      </header>
 
-    <!-- Conversion Type Selector -->
-    <section id="conversion-selector">
-      <h2 class="section-title">Pilih Jenis Konversi</h2>
-      <div class="conversion-grid" id="conversion-grid">
+      <!-- Converter -->
+      <section class="section" id="converter">
 
-        <div class="conv-card active" data-type="dec-bin" id="card-dec-bin">
-          <div class="conv-card__from">Desimal (10)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Biner (2)</div>
-          <div class="conv-card__label">Metode Pembagian</div>
-        </div>
-
-        <div class="conv-card" data-type="oct-bin" id="card-oct-bin">
-          <div class="conv-card__from">Oktal (8)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Biner (2)</div>
-          <div class="conv-card__label">Substitusi 3-Bit</div>
-        </div>
-
-        <div class="conv-card" data-type="hex-bin" id="card-hex-bin">
-          <div class="conv-card__from">Heksadesimal (16)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Biner (2)</div>
-          <div class="conv-card__label">Substitusi 4-Bit</div>
-        </div>
-
-        <div class="conv-card" data-type="bin-dec" id="card-bin-dec">
-          <div class="conv-card__from">Biner (2)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Desimal (10)</div>
-          <div class="conv-card__label">Metode Posisional</div>
-        </div>
-
-        <div class="conv-card" data-type="bin-oct" id="card-bin-oct">
-          <div class="conv-card__from">Biner (2)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Oktal (8)</div>
-          <div class="conv-card__label">Grouping 3-Bit</div>
-        </div>
-
-        <div class="conv-card" data-type="bin-hex" id="card-bin-hex">
-          <div class="conv-card__from">Biner (2)</div>
-          <div class="conv-card__arrow">&#8594;</div>
-          <div class="conv-card__to">Heksadesimal (16)</div>
-          <div class="conv-card__label">Grouping 4-Bit</div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Input Section -->
-    <section class="input-section" id="input-section">
-      <div class="input-wrapper">
-        <input type="text" id="input-field" class="input-field" placeholder="Masukkan bilangan desimal, contoh: 25" autocomplete="off" spellcheck="false">
-        <button id="btn-convert" class="btn-convert">Konversi</button>
-      </div>
-      <div id="input-hint" class="input-hint">Format input: bilangan desimal</div>
-    </section>
-
-    <!-- Step-by-Step Viewer -->
-    <section id="step-viewer" class="step-viewer">
-      <div class="step-header">
-        <div class="step-header__title" id="step-header-title">Desimal ke Biner</div>
-        <div class="step-header__conversion" id="step-header-conversion">25 → ?</div>
-      </div>
-      <div class="step-progress">
-        <div class="step-progress__fill" id="step-progress-fill" style="width: 0%"></div>
-      </div>
-
-      <div class="step-content" id="step-content">
-        <!-- Steps rendered dynamically by app.js -->
-      </div>
-
-      <div class="step-nav">
-        <div class="step-nav__info" id="step-nav-info">Langkah 1 dari 5</div>
-        <div style="display:flex;align-items:center;gap:16px;">
-          <div class="try-it-toggle">
-            <div class="toggle-switch" id="toggle-switch"></div>
-            <span class="toggle-label" id="toggle-label">Mode Latihan: Nonaktif</span>
+        <!-- Conversion Picker -->
+        <div class="picker" id="picker">
+          <div class="picker__row">
+            <button class="conv-card active" data-type="dec-bin" id="card-dec-bin">
+              <span class="conv-card__bases">DES <span class="conv-card__arrow">&rarr;</span> BIN</span>
+              <span class="conv-card__method">Pembagian</span>
+            </button>
+            <button class="conv-card" data-type="oct-bin" id="card-oct-bin">
+              <span class="conv-card__bases">OKT <span class="conv-card__arrow">&rarr;</span> BIN</span>
+              <span class="conv-card__method">3-Bit</span>
+            </button>
+            <button class="conv-card" data-type="hex-bin" id="card-hex-bin">
+              <span class="conv-card__bases">HEX <span class="conv-card__arrow">&rarr;</span> BIN</span>
+              <span class="conv-card__method">4-Bit</span>
+            </button>
           </div>
-          <div class="step-nav__buttons">
-            <button class="btn-step" id="btn-prev" disabled>Sebelumnya</button>
-            <button class="btn-step primary" id="btn-next">Selanjutnya</button>
+          <div class="picker__row">
+            <button class="conv-card" data-type="bin-dec" id="card-bin-dec">
+              <span class="conv-card__bases">BIN <span class="conv-card__arrow">&rarr;</span> DES</span>
+              <span class="conv-card__method">Posisional</span>
+            </button>
+            <button class="conv-card" data-type="bin-oct" id="card-bin-oct">
+              <span class="conv-card__bases">BIN <span class="conv-card__arrow">&rarr;</span> OKT</span>
+              <span class="conv-card__method">Grup 3-Bit</span>
+            </button>
+            <button class="conv-card" data-type="bin-hex" id="card-bin-hex">
+              <span class="conv-card__bases">BIN <span class="conv-card__arrow">&rarr;</span> HEX</span>
+              <span class="conv-card__method">Grup 4-Bit</span>
+            </button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Reference Table -->
-    <section class="ref-section" id="ref-section">
-      <h2 class="section-title">Tabel Referensi</h2>
-      <div class="ref-table-wrapper">
-        <table class="ref-table" id="ref-table">
-          <thead>
-            <tr>
-              <th>Desimal</th>
-              <th>Biner (4-bit)</th>
-              <th>Oktal</th>
-              <th>Heksadesimal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
-            <tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
-            <tr><td>2</td><td>0010</td><td>2</td><td>2</td></tr>
-            <tr><td>3</td><td>0011</td><td>3</td><td>3</td></tr>
-            <tr><td>4</td><td>0100</td><td>4</td><td>4</td></tr>
-            <tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
-            <tr><td>6</td><td>0110</td><td>6</td><td>6</td></tr>
-            <tr><td>7</td><td>0111</td><td>7</td><td>7</td></tr>
-            <tr><td>8</td><td>1000</td><td>10</td><td>8</td></tr>
-            <tr><td>9</td><td>1001</td><td>11</td><td>9</td></tr>
-            <tr><td>10</td><td>1010</td><td>12</td><td>A</td></tr>
-            <tr><td>11</td><td>1011</td><td>13</td><td>B</td></tr>
-            <tr><td>12</td><td>1100</td><td>14</td><td>C</td></tr>
-            <tr><td>13</td><td>1101</td><td>15</td><td>D</td></tr>
-            <tr><td>14</td><td>1110</td><td>16</td><td>E</td></tr>
-            <tr><td>15</td><td>1111</td><td>17</td><td>F</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <!-- Input -->
+        <div class="input-box" id="input-section">
+          <div class="input-box__row">
+            <input type="text" id="input-field" class="input-field" placeholder="Masukkan bilangan desimal, cth: 25" autocomplete="off" spellcheck="false">
+            <button id="btn-convert" class="btn-convert">Konversi</button>
+          </div>
+          <p id="input-hint" class="input-hint">Format input: bilangan desimal</p>
+        </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <p class="footer__text">KonversiBilangan — Media Belajar Interaktif Konversi Bilangan</p>
-    </footer>
+        <!-- Step Viewer -->
+        <div id="step-viewer" class="step-viewer">
+          <div class="step-viewer__head">
+            <div>
+              <div class="step-viewer__title" id="step-header-title">Desimal ke Biner</div>
+              <div class="step-viewer__sub" id="step-header-conversion">25 &rarr; ?</div>
+            </div>
+            <div class="toggle" id="toggle-switch" role="switch" tabindex="0" aria-checked="false">
+              <span class="toggle__label" id="toggle-label">Latihan</span>
+              <span class="toggle__track"><span class="toggle__knob"></span></span>
+            </div>
+          </div>
+          <div class="step-viewer__progress">
+            <div class="step-viewer__bar" id="step-progress-fill"></div>
+          </div>
+          <div class="step-viewer__body" id="step-content"></div>
+          <div class="step-viewer__foot">
+            <span class="step-viewer__info" id="step-nav-info">1 / 5</span>
+            <div class="step-viewer__btns">
+              <button class="btn-step" id="btn-prev" disabled>Sebelumnya</button>
+              <button class="btn-step btn-step--primary" id="btn-next">Selanjutnya</button>
+            </div>
+          </div>
+        </div>
 
-  </div>
+      </section>
+
+      <!-- Reference Table -->
+      <section class="section" id="ref-section">
+        <h2 class="section__title">Tabel Referensi</h2>
+        <p class="section__desc">Konversi cepat bilangan 0 &ndash; 15.</p>
+        <div class="table-wrap">
+          <table class="ref-table" id="ref-table">
+            <thead>
+              <tr><th>Des</th><th>Biner</th><th>Okt</th><th>Hex</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
+              <tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
+              <tr><td>2</td><td>0010</td><td>2</td><td>2</td></tr>
+              <tr><td>3</td><td>0011</td><td>3</td><td>3</td></tr>
+              <tr><td>4</td><td>0100</td><td>4</td><td>4</td></tr>
+              <tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
+              <tr><td>6</td><td>0110</td><td>6</td><td>6</td></tr>
+              <tr><td>7</td><td>0111</td><td>7</td><td>7</td></tr>
+              <tr><td>8</td><td>1000</td><td>10</td><td>8</td></tr>
+              <tr><td>9</td><td>1001</td><td>11</td><td>9</td></tr>
+              <tr><td>10</td><td>1010</td><td>12</td><td>A</td></tr>
+              <tr><td>11</td><td>1011</td><td>13</td><td>B</td></tr>
+              <tr><td>12</td><td>1100</td><td>14</td><td>C</td></tr>
+              <tr><td>13</td><td>1101</td><td>15</td><td>D</td></tr>
+              <tr><td>14</td><td>1110</td><td>16</td><td>E</td></tr>
+              <tr><td>15</td><td>1111</td><td>17</td><td>F</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>KonversiBilangan &mdash; Media Belajar Interaktif</p>
+      </footer>
+
+    </div>
+  </main>
 
   <script src="js/converter.js"></script>
   <script src="js/app.js"></script>
