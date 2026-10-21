@@ -44,8 +44,8 @@ const Converter = (() => {
   // ===== Validation Map =====
   const validators = {
     'dec-bin': { validate: isValidDecimal, base: 'Desimal', chars: '0-9' },
-    'oct-bin': { validate: isValidOctal, base: 'Oktal', chars: '0-7' },
-    'hex-bin': { validate: isValidHex, base: 'Heksadesimal', chars: '0-9, A-F' },
+    'dec-oct': { validate: isValidDecimal, base: 'Desimal', chars: '0-9' },
+    'dec-hex': { validate: isValidDecimal, base: 'Desimal', chars: '0-9' },
     'bin-dec': { validate: isValidBinary, base: 'Biner', chars: '0 dan 1' },
     'bin-oct': { validate: isValidBinary, base: 'Biner', chars: '0 dan 1' },
     'bin-hex': { validate: isValidBinary, base: 'Biner', chars: '0 dan 1' },
@@ -53,7 +53,7 @@ const Converter = (() => {
 
   // ===== DECIMAL → BINARY =====
   function decimalToBinary(input) {
-    const dec = parseInt(input);
+    const dec = parseInt(input, 10);
     const steps = [];
 
     if (dec === 0) {
@@ -94,7 +94,8 @@ const Converter = (() => {
         dividend: quotient,
         divisor: 2,
         quotient: newQuotient,
-        remainder: remainder
+        remainder: remainder,
+        remainderDisplay: remainder.toString()
       });
       
       steps.push({
@@ -137,135 +138,184 @@ const Converter = (() => {
     return { steps, result: binaryResult };
   }
 
-  // ===== OCTAL → BINARY =====
-  function octalToBinary(input) {
-    const digits = input.split('');
+  // ===== DECIMAL → OCTAL =====
+  function decimalToOctal(input) {
+    const dec = parseInt(input, 10);
     const steps = [];
 
-    // Step 1: Explain
+    if (dec === 0) {
+      steps.push({
+        type: 'info',
+        stepLabel: 'Langkah 1',
+        instruction: `Angka <strong>${dec}</strong> dalam desimal langsung bernilai <strong>0</strong> dalam oktal.`,
+        data: null
+      });
+      steps.push({
+        type: 'result',
+        stepLabel: 'Hasil',
+        instruction: `Konversi selesai.`,
+        result: '0',
+        fromBase: '10',
+        toBase: '8'
+      });
+      return { steps, result: '0' };
+    }
+
     steps.push({
       type: 'info',
       stepLabel: 'Langkah 1 — Metode',
-      instruction: `Untuk mengkonversi <strong>${input}</strong> (oktal) ke biner, setiap digit oktal diubah menjadi <strong>3 digit biner</strong> menggunakan tabel konversi. Ini karena 2<sup>3</sup> = 8, sehingga setiap digit oktal (0-7) tepat direpresentasikan oleh 3 bit.`,
+      instruction: `Untuk mengkonversi <strong>${dec}</strong> (desimal) ke oktal, kita membagi bilangan tersebut dengan <strong>8</strong> secara berulang dan mencatat <strong>sisa</strong> pembagiannya. Sisa-sisa ini dibaca dari <strong>bawah ke atas</strong> untuk membentuk bilangan oktal.`,
       data: null
     });
 
-    // Step 2: Split digits
-    steps.push({
-      type: 'info',
-      stepLabel: 'Langkah 2 — Pisahkan Digit',
-      instruction: `Pisahkan bilangan oktal <strong>${input}</strong> menjadi digit-digit individual: ${digits.map(d => `<strong>${d}</strong>`).join(', ')}.`,
-      data: null
-    });
+    const divisions = [];
+    let quotient = dec;
+    let stepIdx = 2;
 
-    // Step 3-N: Convert each digit
-    const groups = [];
-    digits.forEach((digit, i) => {
-      const binary = OCTAL_TO_BIN[digit];
-      groups.push({ source: digit, result: binary });
+    while (quotient > 0) {
+      const remainder = quotient % 8;
+      const newQuotient = Math.floor(quotient / 8);
+      divisions.push({
+        dividend: quotient,
+        divisor: 8,
+        quotient: newQuotient,
+        remainder: remainder,
+        remainderDisplay: remainder.toString()
+      });
 
       steps.push({
-        type: 'bit-group',
-        stepLabel: `Langkah ${3 + i} — Konversi Digit "${digit}"`,
-        instruction: `Digit oktal <strong>${digit}</strong> = <strong>${binary}</strong> dalam biner (3-bit).`,
+        type: 'division',
+        stepLabel: `Langkah ${stepIdx} — Pembagian ke-${divisions.length}`,
+        instruction: `Bagi <strong>${quotient}</strong> dengan <strong>8</strong>. Hasilnya <strong>${newQuotient}</strong>, sisa <strong>${remainder}</strong>.`,
         data: {
-          groups: [...groups],
-          highlightIndex: i,
-          bitSize: 3,
-          tryAnswer: binary
+          divisions: [...divisions],
+          highlightIndex: divisions.length - 1,
+          tryAnswer: remainder
         }
       });
-    });
 
-    // Final: Combine
-    const fullBinary = groups.map(g => g.result).join('');
-    const trimmed = fullBinary.replace(/^0+/, '') || '0';
+      quotient = newQuotient;
+      stepIdx++;
+    }
+
+    const octalResult = divisions.map(d => d.remainder).reverse().join('');
 
     steps.push({
-      type: 'combine',
-      stepLabel: `Langkah ${3 + digits.length} — Gabungkan`,
-      instruction: `Gabungkan semua kelompok biner: <strong>${groups.map(g => g.result).join(' ')}</strong>. ${fullBinary !== trimmed ? `Hapus nol di depan: <strong>${trimmed}</strong>.` : ''}`,
+      type: 'division-result',
+      stepLabel: `Langkah ${stepIdx} — Membaca Hasil`,
+      instruction: `Baca semua sisa pembagian dari <strong>bawah ke atas</strong> untuk mendapatkan bilangan oktal.`,
       data: {
-        groups: groups,
-        combined: fullBinary,
-        result: trimmed
+        divisions: divisions,
+        result: octalResult
       }
     });
 
     steps.push({
       type: 'result',
       stepLabel: 'Hasil Akhir',
-      instruction: `Konversi <strong>${input}</strong> (oktal) ke biner berhasil.`,
-      result: trimmed,
-      fromBase: '8',
-      toBase: '2'
+      instruction: `Konversi <strong>${dec}</strong> (desimal) ke oktal berhasil.`,
+      result: octalResult,
+      fromBase: '10',
+      toBase: '8'
     });
 
-    return { steps, result: trimmed };
+    return { steps, result: octalResult };
   }
 
-  // ===== HEX → BINARY =====
-  function hexToBinary(input) {
-    const upper = input.toUpperCase();
-    const digits = upper.split('');
+  // ===== DECIMAL → HEX =====
+  const DEC_TO_HEX_MAP = {
+    10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F'
+  };
+
+  function decimalToHex(input) {
+    const dec = parseInt(input, 10);
     const steps = [];
+
+    if (dec === 0) {
+      steps.push({
+        type: 'info',
+        stepLabel: 'Langkah 1',
+        instruction: `Angka <strong>${dec}</strong> dalam desimal langsung bernilai <strong>0</strong> dalam heksadesimal.`,
+        data: null
+      });
+      steps.push({
+        type: 'result',
+        stepLabel: 'Hasil',
+        instruction: `Konversi selesai.`,
+        result: '0',
+        fromBase: '10',
+        toBase: '16'
+      });
+      return { steps, result: '0' };
+    }
 
     steps.push({
       type: 'info',
       stepLabel: 'Langkah 1 — Metode',
-      instruction: `Untuk mengkonversi <strong>${upper}</strong> (heksadesimal) ke biner, setiap digit heksadesimal diubah menjadi <strong>4 digit biner</strong>. Ini karena 2<sup>4</sup> = 16, sehingga setiap digit heksadesimal (0-F) tepat direpresentasikan oleh 4 bit.`,
+      instruction: `Untuk mengkonversi <strong>${dec}</strong> (desimal) ke heksadesimal, kita membagi bilangan tersebut dengan <strong>16</strong> secara berulang dan mencatat <strong>sisa</strong> pembagiannya. Jika sisa antara 10&ndash;15, kita ubah ke simbol huruf: <strong>10=A, 11=B, 12=C, 13=D, 14=E, 15=F</strong>. Sisa dibaca dari <strong>bawah ke atas</strong>.`,
       data: null
     });
 
-    steps.push({
-      type: 'info',
-      stepLabel: 'Langkah 2 — Pisahkan Digit',
-      instruction: `Pisahkan bilangan heksadesimal <strong>${upper}</strong> menjadi digit-digit individual: ${digits.map(d => `<strong>${d}</strong>`).join(', ')}.`,
-      data: null
-    });
+    const divisions = [];
+    let quotient = dec;
+    let stepIdx = 2;
 
-    const groups = [];
-    digits.forEach((digit, i) => {
-      const binary = HEX_TO_BIN[digit];
-      groups.push({ source: digit, result: binary });
+    while (quotient > 0) {
+      const remainder = quotient % 16;
+      const newQuotient = Math.floor(quotient / 16);
+      const hexChar = remainder >= 10 ? DEC_TO_HEX_MAP[remainder] : remainder.toString();
+      const displayRemainder = remainder >= 10 ? `${remainder} (${hexChar})` : remainder.toString();
+
+      divisions.push({
+        dividend: quotient,
+        divisor: 16,
+        quotient: newQuotient,
+        remainder: remainder,
+        hexDigit: hexChar,
+        remainderDisplay: displayRemainder
+      });
+
+      const explanation = remainder >= 10
+        ? `Bagi <strong>${quotient}</strong> dengan <strong>16</strong>. Hasilnya <strong>${newQuotient}</strong>, sisa <strong>${remainder}</strong> &rarr; disimbolkan menjadi <strong>${hexChar}</strong>.`
+        : `Bagi <strong>${quotient}</strong> dengan <strong>16</strong>. Hasilnya <strong>${newQuotient}</strong>, sisa <strong>${remainder}</strong>.`;
 
       steps.push({
-        type: 'bit-group',
-        stepLabel: `Langkah ${3 + i} — Konversi Digit "${digit}"`,
-        instruction: `Digit heksadesimal <strong>${digit}</strong> = <strong>${binary}</strong> dalam biner (4-bit).`,
+        type: 'division',
+        stepLabel: `Langkah ${stepIdx} — Pembagian ke-${divisions.length}`,
+        instruction: explanation,
         data: {
-          groups: [...groups],
-          highlightIndex: i,
-          bitSize: 4,
-          tryAnswer: binary
+          divisions: [...divisions],
+          highlightIndex: divisions.length - 1,
+          tryAnswer: remainder >= 10 ? `${hexChar}|${remainder}` : remainder
         }
       });
-    });
 
-    const fullBinary = groups.map(g => g.result).join('');
-    const trimmed = fullBinary.replace(/^0+/, '') || '0';
+      quotient = newQuotient;
+      stepIdx++;
+    }
+
+    const hexResult = divisions.map(d => d.hexDigit).reverse().join('');
 
     steps.push({
-      type: 'combine',
-      stepLabel: `Langkah ${3 + digits.length} — Gabungkan`,
-      instruction: `Gabungkan semua kelompok biner: <strong>${groups.map(g => g.result).join(' ')}</strong>. ${fullBinary !== trimmed ? `Hapus nol di depan: <strong>${trimmed}</strong>.` : ''}`,
+      type: 'division-result',
+      stepLabel: `Langkah ${stepIdx} — Membaca Hasil`,
+      instruction: `Baca semua sisa pembagian dari <strong>bawah ke atas</strong> menggunakan simbol heksadesimal.`,
       data: {
-        groups: groups,
-        combined: fullBinary,
-        result: trimmed
+        divisions: divisions,
+        result: hexResult
       }
     });
 
     steps.push({
       type: 'result',
       stepLabel: 'Hasil Akhir',
-      instruction: `Konversi <strong>${upper}</strong> (heksadesimal) ke biner berhasil.`,
-      result: trimmed,
-      fromBase: '16',
-      toBase: '2'
+      instruction: `Konversi <strong>${dec}</strong> (desimal) ke heksadesimal berhasil.`,
+      result: hexResult,
+      fromBase: '10',
+      toBase: '16'
     });
 
-    return { steps, result: trimmed };
+    return { steps, result: hexResult };
   }
 
   // ===== BINARY → DECIMAL =====
@@ -490,8 +540,8 @@ const Converter = (() => {
   // ===== Public API =====
   const converters = {
     'dec-bin': decimalToBinary,
-    'oct-bin': octalToBinary,
-    'hex-bin': hexToBinary,
+    'dec-oct': decimalToOctal,
+    'dec-hex': decimalToHex,
     'bin-dec': binaryToDecimal,
     'bin-oct': binaryToOctal,
     'bin-hex': binaryToHex,
@@ -499,8 +549,8 @@ const Converter = (() => {
 
   const labels = {
     'dec-bin': { from: 'Desimal', to: 'Biner', fromBase: '10', toBase: '2' },
-    'oct-bin': { from: 'Oktal', to: 'Biner', fromBase: '8', toBase: '2' },
-    'hex-bin': { from: 'Heksadesimal', to: 'Biner', fromBase: '16', toBase: '2' },
+    'dec-oct': { from: 'Desimal', to: 'Oktal', fromBase: '10', toBase: '8' },
+    'dec-hex': { from: 'Desimal', to: 'Heksadesimal', fromBase: '10', toBase: '16' },
     'bin-dec': { from: 'Biner', to: 'Desimal', fromBase: '2', toBase: '10' },
     'bin-oct': { from: 'Biner', to: 'Oktal', fromBase: '2', toBase: '8' },
     'bin-hex': { from: 'Biner', to: 'Heksadesimal', fromBase: '2', toBase: '16' },
@@ -533,8 +583,8 @@ const Converter = (() => {
   function getPlaceholder(type) {
     const placeholders = {
       'dec-bin': 'Masukkan bilangan desimal, contoh: 25',
-      'oct-bin': 'Masukkan bilangan oktal, contoh: 37',
-      'hex-bin': 'Masukkan bilangan heksadesimal, contoh: 2F',
+      'dec-oct': 'Masukkan bilangan desimal, contoh: 125',
+      'dec-hex': 'Masukkan bilangan desimal, contoh: 254',
       'bin-dec': 'Masukkan bilangan biner, contoh: 11001',
       'bin-oct': 'Masukkan bilangan biner, contoh: 11001',
       'bin-hex': 'Masukkan bilangan biner, contoh: 101111',

@@ -182,11 +182,14 @@
     let h = `<table class="division-table"><thead><tr><th>Bilangan</th><th>Dibagi</th><th>Hasil</th><th>Sisa</th></tr></thead><tbody>`;
     d.divisions.forEach((r, i) => {
       const cls = i === d.highlightIndex ? 'highlight' : i < d.highlightIndex ? 'completed' : '';
-      h += `<tr class="${cls}"><td>${r.dividend}</td><td>2</td><td>${r.quotient}</td>`;
+      const divisor = r.divisor !== undefined ? r.divisor : 2;
+      const displayRemainder = r.remainderDisplay !== undefined ? r.remainderDisplay : r.remainder;
+      h += `<tr class="${cls}"><td>${r.dividend}</td><td>${divisor}</td><td>${r.quotient}</td>`;
       if (tryItMode && i === d.highlightIndex) {
-        h += `<td class="remainder"><input type="text" class="try-input" data-answer="${r.remainder}" placeholder="?" autocomplete="off"><div class="try-feedback"></div></td>`;
+        const ans = d.tryAnswer !== undefined ? d.tryAnswer : r.remainder;
+        h += `<td class="remainder"><input type="text" class="try-input" data-answer="${ans}" placeholder="?" autocomplete="off"><div class="try-feedback"></div></td>`;
       } else {
-        h += `<td class="remainder">${r.remainder}</td>`;
+        h += `<td class="remainder">${displayRemainder}</td>`;
       }
       h += `</tr>`;
     });
@@ -195,9 +198,16 @@
 
   function renderDivisionResult(d) {
     let h = `<table class="division-table"><thead><tr><th>Bilangan</th><th>Dibagi</th><th>Hasil</th><th>Sisa</th></tr></thead><tbody>`;
-    d.divisions.forEach(r => { h += `<tr class="completed"><td>${r.dividend}</td><td>2</td><td>${r.quotient}</td><td class="remainder">${r.remainder}</td></tr>`; });
+    d.divisions.forEach(r => {
+      const divisor = r.divisor !== undefined ? r.divisor : 2;
+      const displayRemainder = r.remainderDisplay !== undefined ? r.remainderDisplay : r.remainder;
+      h += `<tr class="completed"><td>${r.dividend}</td><td>${divisor}</td><td>${r.quotient}</td><td class="remainder">${displayRemainder}</td></tr>`;
+    });
     h += `</tbody></table><div class="calc-expression">Baca sisa dari bawah ke atas: `;
-    for (let i = d.divisions.length - 1; i >= 0; i--) h += `<span class="highlight-term">${d.divisions[i].remainder}</span>`;
+    for (let i = d.divisions.length - 1; i >= 0; i--) {
+      const digit = d.divisions[i].hexDigit !== undefined ? d.divisions[i].hexDigit : d.divisions[i].remainder;
+      h += `<span class="highlight-term">${digit}</span>`;
+    }
     return h + ` = <span class="highlight-term">${d.result}</span></div>`;
   }
 
@@ -271,16 +281,17 @@
 
   // ===== Answer Check =====
   function checkAnswer(inp) {
-    const ans = inp.dataset.answer;
+    const rawAns = inp.dataset.answer || '';
+    const validAnswers = rawAns.toString().split('|').map(s => s.trim().toUpperCase());
     const val = inp.value.trim().toUpperCase();
     const fb = inp.parentElement.querySelector('.try-feedback') || inp.nextElementSibling;
     if (!val) return;
-    if (val === ans.toString().toUpperCase()) {
+    if (validAnswers.includes(val)) {
       inp.classList.remove('incorrect'); inp.classList.add('correct'); inp.disabled = true;
       if (fb) { fb.textContent = 'Benar!'; fb.className = 'try-feedback correct'; }
     } else {
       inp.classList.remove('correct'); inp.classList.add('incorrect');
-      if (fb) { fb.textContent = `Jawaban: ${ans}`; fb.className = 'try-feedback incorrect'; }
+      if (fb) { fb.textContent = `Jawaban: ${validAnswers[0]}`; fb.className = 'try-feedback incorrect'; }
     }
   }
 

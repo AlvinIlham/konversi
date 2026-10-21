@@ -1,0 +1,20 @@
+{
+  "name": "konversi-bilangan",
+  "version": "1.0.0",
+  "description": "Media belajar interaktif konversi sistem bilangan step by step",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "konversi",
+    "bilangan",
+    "desimal",
+    "biner",
+    "oktal",
+    "heksadesimal"
+  ],
+  "author": "",
+  "license": "ISC"
+}
